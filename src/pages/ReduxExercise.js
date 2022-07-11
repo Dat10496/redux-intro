@@ -3,8 +3,9 @@ import { Container, Button, Typography, Box, Grid } from "@mui/material"
 import productOne from "../images/product1.gif";
 import productTwo from "../images/product2.gif";
 import ReactJson from "react-json-view";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import WrapperBox from "../components/WrapperBox";
+import { addToCart, removeCart } from "../service/cart/slice";
 
 const RootComponent = (props) => {
   return (
@@ -49,7 +50,7 @@ const ProductPage = (props) => {
 const CartPage = (props) => {
   // Step 6
   // Replace the line below to get data of the second product from state.cart.totalPrice
-  const totalPrice = "...";
+  const totalPrice = useSelector(state => state.cart.totalPrice);
 
   return (
     <WrapperBox>
@@ -77,8 +78,7 @@ const ProductOne = (props) => {
   // Step 4
   // Replace the line below to get data of the first product from state.product
   // You should see the price is updated
-  const product = { id: "...", title: "...", price: "..." };
-
+  const product = useSelector(state => state.product[0])
   // Step 7
   // Define: const dispatch = useDispatch();
   // Create a function to handle click event of the button Add
@@ -86,11 +86,17 @@ const ProductOne = (props) => {
   // Make the function handle onClick event of the button
   // eslint-disable-next-line
   const dispatch = useDispatch();
+  const addProduct = () => {
+    dispatch(addToCart(product))
+  }
 
   // Step 8
   // Create a function to handle click event of the button Remove
   // In the function, dispatch cartActions.removeProduct(product) to trigger the action remove product from the cart
   // Make the function handle onClick event of the button
+  const removeProduct = () => {
+    dispatch(removeCart(product))
+  }
 
   return (
     <WrapperBox>
@@ -106,10 +112,10 @@ const ProductOne = (props) => {
         </Grid>
         <Grid item xs={8} >
           <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <Button variant="success" sx={{ width: "5rem" }}>
+            <Button onClick={addProduct} variant="success" sx={{ width: "5rem" }}>
               Add
             </Button>
-            <Button variant="error" sx={{ width: "5rem" }}>
+            <Button onClick={removeProduct} variant="error" sx={{ width: "5rem" }}>
               Remove
             </Button>
           </div>
@@ -123,10 +129,16 @@ const ProductTwo = (props) => {
   // Step 5
   // Replace the line below to get data of the second product from state.product
   // You should see the price is updated
-  const product = { id: "...", title: "...", price: "..." };
-
+  const product = useSelector(state => state.product[1])
   // Step 9
   // Repeat step 7 and 8 for this component
+  const dispatch = useDispatch()
+  const addProduct = () => {
+    dispatch(addToCart(product))
+  }
+  const removeProduct =() => {
+    dispatch(removeCart(product))
+  }
 
   return (
     <WrapperBox>
@@ -142,10 +154,10 @@ const ProductTwo = (props) => {
         </Grid>
         <Grid item xs={8} >
           <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <Button variant="success" sx={{ width: "5rem" }}>
+            <Button onClick={addProduct} variant="success" sx={{ width: "5rem" }}>
               Add
             </Button>
-            <Button variant="error" sx={{ width: "5rem" }}>
+            <Button onClick={removeProduct} variant="error" sx={{ width: "5rem" }}>
               Remove
             </Button>
           </div>
@@ -159,7 +171,7 @@ const CartProductOne = (props) => {
   // Step 2
   // Replace the line below to get data of the first product from state.cart.products
   // Change the price of products in `service/cart/slice.js` to see the effect
-  const product = { price: "...", qty: "..." };
+  const product = useSelector(state=> state.cart.products[0])
 
   return (
     <WrapperBox>
@@ -182,7 +194,7 @@ const CartProductTwo = (props) => {
   // Step 3
   // Replace the line below to get data of the second product from state.cart.products
   // Change the price of products in `service/cart/slice.js` to see the effect
-  const product = { price: "...", qty: "..." };
+  const product = useSelector(state=> state.cart.products[1])
 
   return (
     <WrapperBox>
@@ -203,6 +215,8 @@ const Store = (props) => {
   // Step 1
   // use useSelector() to get the data of products and cart in the store
   // pass {cart, product} to the src attribute of the component <ReactJson/>
+  const cart = useSelector(state => state.cart)
+  const product = useSelector(state => state.product)
 
   return (
     <WrapperBox>
@@ -212,7 +226,7 @@ const Store = (props) => {
       <Box sx={{ textAlign: "start" }}>
         <ReactJson
           name="store"
-          src={{}}
+          src={{cart, product}}
           theme="monokai"
           displayDataTypes={false}
           displayObjectSize={false}
